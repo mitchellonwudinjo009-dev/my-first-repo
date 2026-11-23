@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streamify Music Platform</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        streamify: {
+                            green: '#00FF66',
+                            greenHover: '#00cc52',
+                            dark: '#0A0A0A',
+                            card: '#121212',
+                            cardHover: '#1A1A1A',
+                            border: '#282828'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-streamify-dark text-white h-screen flex flex-col overflow-hidden">
+
+    <div id="app" class="flex flex-1 h-[calc(100vh-90px)] overflow-hidden">
+        
+        <!-- SIDEBAR -->
+        <aside class="w-64 bg-black border-r border-streamify-border flex flex-col justify-between hidden md:flex z-20">
+            <div>
+                <!-- Logo Header -->
+                <div class="p-6 flex items-center space-x-3 cursor-pointer" onclick="router.navigate('home')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-streamify-green to-emerald-700 flex items-center justify-center glow-green">
+                        <i class="fa-solid fa-waveform text-black text-xl font-bold"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg tracking-wider text-white">STREAMIFY</h1>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="px-4 space-y-1">
+                    <button onclick="router.navigate('home')" id="nav-home" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl text-sm font-medium transition-all text-streamify-green bg-streamify-card border border-streamify-green/20">
+                        <i class="fa-solid fa-house w-5"></i>
+                        <span>Home</span>
+                    </button>
+                    <button onclick="router.navigate('favorites')" id="nav-favorites" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-streamify-card">
+                        <i class="fa-solid fa-heart w-5"></i>
+                        <span>Favorites</span>
+                    </button>
+                    <button onclick="router.navigate('downloads')" id="nav-downloads" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-streamify-card">
+                        <i class="fa-solid fa-download w-5"></i>
+                        <span>Downloads</span>
+                    </button>
+                    <button onclick="router.navigate('bin')" id="nav-bin" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-streamify-card">
+                        <i class="fa-solid fa-trash-can w-5"></i>
+                        <span>Bin</span>
+                    </button>
+                    <button onclick="router.navigate('history')" id="nav-history" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-streamify-card">
+                        <i class="fa-solid fa-clock-rotate-left w-5"></i>
+                        <span>History</span>
+                    </button>
+                    
+                    <!-- Dynamic Creator Library Tab -->
+                    <div id="sidebarLibrarySection"></div>
+
+                    <div class="pt-4 pb-2 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Creator Studio</div>
+                    <button onclick="router.navigate('upload')" id="nav-upload" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-streamify-card">
+                        <i class="fa-solid fa-cloud-arrow-up w-5"></i>
+                        <span>Upload Music</span>
+                    </button>
+                    <button onclick="router.navigate('beatmaker')" id="nav-beatmaker" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-streamify-card">
+                        <i class="fa-solid fa-wand-magic-sparkles w-5"></i>
+                        <span>Create Beat</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Bottom Sidebar / Settings -->
+            <div class="p-4 border-t border-streamify-border">
+                <button onclick="router.navigate('settings')" id="nav-settings" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-streamify-card">
+                    <i class="fa-solid fa-gear w-5"></i>
+                    <span>Settings</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 flex flex-col min-w-0 bg-streamify-dark overflow-y-auto relative">
+            
+            <header class="sticky top-0 z-10 bg-streamify-dark/95 backdrop-blur-md border-b border-streamify-border px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4 flex-1 max-w-xl">
+                    <div class="relative w-full">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
+                        <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Search songs, artists, categories..." class="w-full bg-streamify-card border border-streamify-border rounded-full pl-11 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-streamify-green transition-all">
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div id="authHeaderSection" class="flex items-center space-x-3"></div>
+                </div>
+            </header>
+
+            <!-- Dynamic Views Container -->
+            <div id="mainViewContainer" class="flex-1 p-6 md:p-8 pb-32"></div>
+        </main>
+    </div>
+
+    <!-- BOTTOM HOVER PLAYER TRIGGER ZONE -->
+    <div id="playerHoverZone" class="fixed bottom-0 left-0 right-0 h-10 z-30"></div>
+
+    <!-- PERSISTENT AUDIO PLAYER -->
+    <footer id="persistentPlayer" class="h-[90px] bg-black border-t border-streamify-border px-4 md:px-6 flex items-center justify-between z-40 fixed bottom-0 left-0 right-0 transition-transform duration-300 ease-in-out shadow-2xl">
+        <!-- Track Info -->
+        <div class="flex items-center space-x-3 w-1/4 min-w-[200px]">
+            <canvas id="playerCanvas" width="56" height="56" class="w-14 h-14 rounded-lg object-cover border border-streamify-border bg-streamify-card"></canvas>
+            <div class="truncate">
+                <h4 id="playerTitle" class="text-sm font-semibold text-white truncate">Select a track</h4>
+                <p id="playerArtist" class="text-xs text-gray-400 truncate">Streamify Artist</p>
+            </div>
+            <div class="flex items-center space-x-1 ml-2">
+                <button id="playerFavoriteBtn" onclick="toggleFavoriteCurrentTrack()" class="text-gray-400 hover:text-streamify-green transition-colors text-base p-1" title="Favorite">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+                <button id="playerDownloadBtn" onclick="downloadCurrentTrack()" class="text-gray-400 hover:text-streamify-green transition-colors text-base p-1" title="Download Track">
+                    <i class="fa-solid fa-download"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Player Controls & Seekbar -->
+        <div class="flex flex-col items-center max-w-xl w-2/4 px-4">
+            <div class="flex items-center space-x-6 mb-2">
+                <button id="shuffleBtn" onclick="toggleShuffle()" class="text-gray-400 hover:text-white transition-colors text-sm" title="Shuffle"><i class="fa-solid fa-shuffle"></i></button>
+                <button onclick="playPrevious()" class="text-gray-300 hover:text-streamify-green transition-colors text-base" title="Previous"><i class="fa-solid fa-backward-step"></i></button>
+                <button onclick="togglePlayPause()" id="playPauseBtn" class="w-10 h-10 rounded-full bg-streamify-green text-black flex items-center justify-center hover:scale-105 transition-all shadow-lg shadow-streamify-green/20" title="Play/Pause">
+                    <i class="fa-solid fa-play text-sm ml-0.5"></i>
+                </button>
+                <button onclick="playNext()" class="text-gray-300 hover:text-streamify-green transition-colors text-base" title="Next"><i class="fa-solid fa-forward-step"></i></button>
+                <button id="repeatBtn" onclick="toggleRepeat()" class="text-gray-400 hover:text-white transition-colors text-sm" title="Repeat"><i class="fa-solid fa-repeat"></i></button>
+            </div>
+            
+            <div class="flex items-center space-x-3 w-full text-xs text-gray-400">
+                <span id="currentTime">0:00</span>
+                <input type="range" id="progressBar" value="0" min="0" max="100" oninput="seekTrack(this.value)" class="flex-1 h-1 bg-streamify-border rounded-lg appearance-none cursor-pointer">
+                <span id="totalDuration">0:00</span>
+            </div>
+        </div>
+
+        <!-- Volume & Extras -->
+        <div class="flex items-center justify-end space-x-4 w-1/4 min-w-[180px]">
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleMute()" id="muteBtn" class="text-gray-400 hover:text-white" title="Mute/Unmute"><i class="fa-solid fa-volume-high"></i></button>
+                <input type="range" id="volumeBar" min="0" max="1" step="0.05" value="1" oninput="changeVolume(this.value)" class="w-20 h-1 bg-streamify-border rounded-lg appearance-none cursor-pointer" title="Volume">
+            </div>
+        </div>
+    </footer>
+
+    <div id="modalContainer"></div>
+    <div id="toastContainer" class="fixed bottom-24 right-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <audio id="audioElement" ontimeupdate="updateProgress()" onended="handleTrackEnded()"></audio>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
